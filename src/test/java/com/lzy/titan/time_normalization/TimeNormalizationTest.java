@@ -17,10 +17,12 @@ public class TimeNormalizationTest {
 		timeNor = new TimeNormalization();
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void  testEncodeBase4_error01(){
-		byte[] arr = {1,2,3,3,12};
-		timeNor.encodeBase4(arr);
+	@Test
+	public void  testEncodeBase4_miss(){
+		byte[] arr = {1,0,1,1,1}; // 0,1,0,1,1,1相同的
+		byte[] arr2 = {0,1,0,1,1,1};
+		assertEquals("113", timeNor.encodeBase4(arr));
+		assertEquals("113", timeNor.encodeBase4(arr2));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -79,6 +81,7 @@ public class TimeNormalizationTest {
 		assertEquals("1321223300012222", timeNor.normalize(1500003100l));
 		assertEquals("1321223300021133", timeNor.normalize(1500003233l));
 		assertEquals("1321223300112031", timeNor.normalize(1500003831l));
+		assertEquals("1321223200003332", timeNor.normalize(1499954821l)); // test
 		assertEquals("0000000000000000", timeNor.normalize(TimeNormalization.MIN_TIMESTAMP));
 		assertEquals("3333333333333333", timeNor.normalize(TimeNormalization.MAX_TIMESTAMP));
 		
@@ -109,6 +112,7 @@ public class TimeNormalizationTest {
 		assertEquals(1500000021l, timeNor.deNormalize("1321223233011030").longValue(),1);
 		assertEquals(1500002786l, timeNor.deNormalize("1321223233333333").longValue(),1);
 		assertEquals(1500003233l, timeNor.deNormalize("1321223300021133").longValue(),1);
+		assertEquals(1499954821l, timeNor.deNormalize("1321223200003333").longValue(),1);
 		
 		// random test
 		for(int i =0;i<1000000;i++){
@@ -510,8 +514,8 @@ public class TimeNormalizationTest {
 	
 	
 	@Test
-	//TODO(might be error!)
 	public void testNearBy(){
+		//
 		{
 			String oriTimeHash = timeNor.normalize(1500000253l);
 			String leftNearByTimeHash = timeNor.leftNearBy(oriTimeHash);
@@ -525,12 +529,27 @@ public class TimeNormalizationTest {
 			String rightNearByTimeHash = timeNor.rightNearBy(oriTimeHash);
 			System.out.println("orgin time hash:"+oriTimeHash);
 			System.out.println("right nearby time hash:"+rightNearByTimeHash);
-			assertEquals("1321223233022013", rightNearByTimeHash);
+			assertEquals("1321223233022020", rightNearByTimeHash);
+		}
+		
+		{
+			String oriTimeHash = timeNor.normalize(1499954821l);
+			String leftNearByTimeHash = timeNor.leftNearBy(oriTimeHash);
+			System.out.println("orgin time hash:"+oriTimeHash);
+			System.out.println("left nearby time hash:"+leftNearByTimeHash);
+			assertEquals("1321223200003331", leftNearByTimeHash);
+		}
+		
+		{
+			String oriTimeHash = timeNor.normalize(1499954821l);
+			String rightNearByTimeHash = timeNor.rightNearBy(oriTimeHash);
+			System.out.println("orgin time hash:"+oriTimeHash);
+			System.out.println("right nearby time hash:"+rightNearByTimeHash);
+			assertEquals("1321223200003333", rightNearByTimeHash);//经度太小有可能是一样的
 		}
 	}
 	
 	@Test
-	//TODO(might be error!)
 	public void testNearBy_WithPrecision(){
 		{
 			String oriTimeHash = timeNor.normalize(1546487985l,8);
@@ -539,8 +558,19 @@ public class TimeNormalizationTest {
 			System.out.println("orgin time hash:"+oriTimeHash);
 			System.out.println("left nearby time hash:"+leftNearByTimeHash);
 			System.out.println("right nearby time hash:"+rightNearByTimeHash);
-			assertEquals("13311302", leftNearByTimeHash);
-			assertEquals("13311310", rightNearByTimeHash);
+			assertEquals("13311303", leftNearByTimeHash);
+			assertEquals("13311311", rightNearByTimeHash);
+		}
+		
+		{
+			String oriTimeHash = timeNor.normalize(1546487985l,16);
+			String leftNearByTimeHash = timeNor.leftNearBy(oriTimeHash);
+			String rightNearByTimeHash = timeNor.rightNearBy(oriTimeHash);
+			System.out.println("orgin time hash:"+oriTimeHash);
+			System.out.println("left nearby time hash:"+leftNearByTimeHash);
+			System.out.println("right nearby time hash:"+rightNearByTimeHash);
+			assertEquals("1331131011330232", leftNearByTimeHash);
+			assertEquals("1331131011330300", rightNearByTimeHash);
 		}
 	}
 	
@@ -564,11 +594,28 @@ public class TimeNormalizationTest {
 		
 		
 		// quarternary add | to decimal | add | to binary | to base4
-		System.out.println(Integer.parseInt("1321223200000000",4));
-		System.out.println(Integer.parseInt("0000000100000000",4));
-		long ret = timeNor.bitToTime(timeNor.stringToIntArray(timeNor.leftFill(Integer.toBinaryString(2041380864), 32, '0')));
-		System.out.println(ret);  //1499906481
-		System.out.println(timeNor.deNormalize("1321223200000000"));
+		int i1 = Integer.parseInt("1321223200003333",4);
+		int deltaT = Integer.parseInt("0000000100000000",4);
+		System.out.println("original time:"+i1);
+		System.out.println("delta T time:"+deltaT);
+		long leftRet = timeNor.bitToTime(timeNor.stringToIntArray(timeNor.leftFill(Integer.toBinaryString(i1-deltaT), 32, '0')));
+		System.out.println("left nearby time:"+leftRet);  //1499906481
+		System.out.println("time delta ms:"+(timeNor.deNormalize("1321223200003333")-leftRet));
+		System.out.println(timeNor.normalize(leftRet));
+		
+		
+		long rightRet = timeNor.bitToTime(timeNor.stringToIntArray(timeNor.leftFill(Integer.toBinaryString(i1+deltaT), 32, '0')));
+		System.out.println("right nearby time:"+rightRet);  //1499906481
+		System.out.println("time delta ms:"+(timeNor.deNormalize("1321223200003333")-rightRet));
+		System.out.println(timeNor.normalize(rightRet));
+	}
+	
+	@Test
+	public void testOthers2(){
+		int i1 = Integer.parseInt("13212232",4);
+		int deltaT = Integer.parseInt("1",4);
+		System.out.println(Integer.toBinaryString(i1-deltaT));
+		System.out.println(timeNor.encodeBase4(timeNor.stringToIntArray("0"+Integer.toBinaryString(i1-deltaT))));
 	}
 
 }

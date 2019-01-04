@@ -92,19 +92,43 @@ public class TimeNormalization {
 		return bitToTime(decodeBase4(timeHash));
 	}
 	
-	public String encodeBase4(byte[] bitArr) {
-		if(bitArr == null || bitArr.length%2 != 0){
-			throw new IllegalArgumentException("must be dual.");
+	// TODO(kong)是否不要限制自动补偶数位的0 ?? 这好像有点不对？？应该要做到
+	/**
+	 * 
+	 * 二进制转四进制
+	 * 
+	 * 输出必须是二进制byte数组
+	 * @param binarybitArr
+	 * @return
+	 */
+	public String encodeBase4(byte[] binarybitArr) {
+		if(binarybitArr == null){
+			throw new IllegalArgumentException("must not be null.");
 		}
+		byte[] newbitArr = binarybitArr;
+		if(binarybitArr.length%2!=0){
+			newbitArr = new byte[binarybitArr.length+1]; // 自动最高位补0
+			newbitArr[0] = 0;
+			for(int i = 1;i <= binarybitArr.length;i++){
+				newbitArr[i] = binarybitArr[i-1];
+			}
+		}
+		
+		
 		StringBuilder builder = new StringBuilder();
 		int stepSize = 2;	// base4:means 2^2  2bit
-		for(int i = 0;i < bitArr.length;i += stepSize){
-			int tempCode = (bitArr[i]<<1) + bitArr[i+1];
+		for(int i = 0;i < newbitArr.length;i += stepSize){
+			int tempCode = (newbitArr[i]<<1) + newbitArr[i+1];
 			builder.append(tempCode);
 		}
 		return builder.toString();
 	}
 	
+	/**
+	 * 四进制转二进制
+	 * @param base4Str
+	 * @return
+	 */
 	public byte[] decodeBase4(String base4Str){
 		if(base4Str==null || base4Str == ""){
 			return null;
@@ -250,11 +274,9 @@ public class TimeNormalization {
 		if(timeHash == null || timeHash == ""){
 			return retval;
 		}
-		int oriPrecision = timeHash.length();
-		int fillPrecision = MAX_PRECISION_16 - oriPrecision+1;
 		
-		String completeTimeHash = rightFill(timeHash,MAX_PRECISION_16, '0');
-		String deltaTTimeHash = leftFill(rightFill("1",fillPrecision, '0'), MAX_PRECISION_16, '0');
+		String completeTimeHash = timeHash;
+		String deltaTTimeHash = "1";  // base4 加减最后一位
 		
 		// to decimal
 		int minusDec = Integer.parseInt(completeTimeHash,4) - Integer.parseInt(deltaTTimeHash,4);
@@ -263,9 +285,8 @@ public class TimeNormalization {
 		}
 		
 		// decimal to binary
-		long ret = bitToTime(stringToIntArray(leftFill(Integer.toBinaryString(minusDec), BIT_NUMBER_32, '0')));
-		System.out.println("deltaT:"+ret);
-		return normalize(ret,oriPrecision);
+		return encodeBase4(stringToIntArray(Integer.toBinaryString(minusDec)));
+		
 	}
 	
 	/**
