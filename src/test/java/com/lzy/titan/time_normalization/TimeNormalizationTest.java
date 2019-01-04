@@ -79,6 +79,26 @@ public class TimeNormalizationTest {
 		assertEquals("1321223300012222", timeNor.normalize(1500003100l));
 		assertEquals("1321223300021133", timeNor.normalize(1500003233l));
 		assertEquals("1321223300112031", timeNor.normalize(1500003831l));
+		assertEquals("0000000000000000", timeNor.normalize(TimeNormalization.MIN_TIMESTAMP));
+		assertEquals("3333333333333333", timeNor.normalize(TimeNormalization.MAX_TIMESTAMP));
+		
+		
+		assertEquals("1321223300", timeNor.normalize(1500003831l,10));
+		
+		// with prediction
+		assertEquals("1321223300", timeNor.normalize(1500003831l,10));
+		assertEquals("132122", timeNor.normalize(1500003831l,6));
+		assertEquals("1321223300112031", timeNor.normalize(1500003831l,16));
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testNormalize_Error01(){
+		assertEquals("", timeNor.normalize(1500003831l,0));
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testNormalize_Error02(){
+		assertEquals("", timeNor.normalize(1500003831l,17));
 	}
 	
 	@Test

@@ -26,6 +26,7 @@ public class TimeNormalization {
 	public static final Long MIN_TIMESTAMP = 0l;   // 1970-01-01 00:00:00  (timestamp)
 	// bit number to split timestamp,binary split
 	public static final Integer BIT_NUMBER = 32;
+	public static final Integer MAX_PRECISION = 16;
 	
 	// 32bit每一位 *2  最低位代表的是0.73秒
 	public static final Double BASE_BIT_NUM = MAX_TIMESTAMP/Math.pow(2, BIT_NUMBER);
@@ -53,10 +54,26 @@ public class TimeNormalization {
 	public String normalize(Long timestamp){
 		String retval = "";
 		if(timestamp < 0){
-			return "";
+			throw new IllegalArgumentException("timestamp value must be positive!");
 		}
 		byte[] bitArr = timeToBit(timestamp);
 		retval = encodeBase4(bitArr);
+		return retval;
+	}
+	
+	/**
+	 * 正规化数值按照精度返回
+	 * 
+	 * @param timestamp
+	 * @param precision
+	 * @return
+	 */
+	public String normalize(Long timestamp,int precision){
+		String retval = "";
+		if (precision > MAX_PRECISION || precision <= 0) {
+			throw new IllegalArgumentException("timehash string illegal,must in [0,16]");
+		}
+		retval = normalize(timestamp).substring(0, precision);
 		return retval;
 	}
 	
@@ -156,6 +173,20 @@ public class TimeNormalization {
 			retval+=a;
 		}
 		return Math.round(retval);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String leftNearBy(String timeHash){
+		String retval = "";
+		return retval;
+	}
+	
+	public String rightNearBy(String timeHash){
+		String retval = "";
+		return retval;
 	}
 	
 }
