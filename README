@@ -29,9 +29,13 @@ algorithm is refereneced by https://en.wikipedia.org/wiki/Geohash
 对时间戳归一化到 一共16位的base4字符串
 
 
--- 详情参考单元测试
+-- 详情参考单元测试 整体采用base4 encode.
 样例：
 assertEquals("1321223233000000", timeNor.normalize(1499999777l));
 assertEquals("1321223233010233", timeNor.normalize(1500000000l));
 assertEquals("1321223233010302", timeNor.normalize(1500000002l));
 assertEquals("1321223233010331", timeNor.normalize(1500000010l));
+
+方法提供带precision的时间点左右deltaT的timeHash范围数值 --详情还是参考单元测试
+样例：
+   13311303 deltaT <- 13311310 -> deltaT 13311310
