@@ -1,5 +1,7 @@
 package com.lzy.titan.time_normalization;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * 时间索引编码
  * 
@@ -25,11 +27,11 @@ public class TimeNormalization {
 	public static final Long MAX_TIMESTAMP = 3155731200l; // 2070-01-01 00:00:00  (timestamp)
 	public static final Long MIN_TIMESTAMP = 0l;   // 1970-01-01 00:00:00  (timestamp)
 	// bit number to split timestamp,binary split
-	public static final Integer BIT_NUMBER = 32;
-	public static final Integer MAX_PRECISION = 16;
+	public static final Integer BIT_NUMBER_32 = 32;
+	public static final Integer MAX_PRECISION_16 = 16;
 	
 	// 32bit每一位 *2  最低位代表的是0.73秒
-	public static final Double BASE_BIT_NUM = MAX_TIMESTAMP/Math.pow(2, BIT_NUMBER);
+	public static final Double BASE_BIT_NUM = MAX_TIMESTAMP/Math.pow(2, BIT_NUMBER_32);
 	
 	
 	/**
@@ -70,7 +72,7 @@ public class TimeNormalization {
 	 */
 	public String normalize(Long timestamp,int precision){
 		String retval = "";
-		if (precision > MAX_PRECISION || precision <= 0) {
+		if (precision > MAX_PRECISION_16 || precision <= 0) {
 			throw new IllegalArgumentException("timehash string illegal,must in [0,16]");
 		}
 		retval = normalize(timestamp).substring(0, precision);
@@ -83,6 +85,10 @@ public class TimeNormalization {
 	 * @return timestamp
 	 */
 	public Long deNormalize(String timeHash){
+		if(timeHash==null || timeHash.length()!= MAX_PRECISION_16){
+			throw new IllegalArgumentException("deNormalize use timehash string illegal,length must be 16");
+		}
+		
 		return bitToTime(decodeBase4(timeHash));
 	}
 	
@@ -140,13 +146,13 @@ public class TimeNormalization {
 	 * 
 	 */
 	public byte[] timeToBit(Long timestamp){
-		byte[] retval = new byte[BIT_NUMBER];
+		byte[] retval = new byte[BIT_NUMBER_32];
 		
 		double minVal = MIN_TIMESTAMP.doubleValue();
 		double maxVal = MAX_TIMESTAMP.doubleValue();
 		
 		
-		for(int i = 0;i < BIT_NUMBER;i++){
+		for(int i = 0;i < BIT_NUMBER_32;i++){
 			double tmpTime = minVal+maxVal;
 			tmpTime = tmpTime/2d;
 			// 中间值和当前时间戳的比较
@@ -165,28 +171,118 @@ public class TimeNormalization {
 		return retval;
 	}
 	
-	
+	/**
+	 * must be in 32bit bytes array
+	 * @param bits
+	 * @return
+	 */
 	public Long bitToTime(byte[] bits){
 		double retval = 0l;
-		for(int i = 0;i < BIT_NUMBER;i++){
-			double a = (bits[i] & 0xff) *BASE_BIT_NUM* Math.pow(2, BIT_NUMBER-i-1);
+		for(int i = 0;i < BIT_NUMBER_32;i++){
+			double a = (bits[i] & 0xff) *BASE_BIT_NUM* Math.pow(2, BIT_NUMBER_32-i-1);
 			retval+=a;
 		}
 		return Math.round(retval);
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
-	public String leftNearBy(String timeHash){
+	
+	public String leftFill(String str,int length,char fillChar){
+		String oriStr = str;
 		String retval = "";
+		if(str == null || str == ""){
+			oriStr = "";
+		}
+		
+		for(int i=0;i<length-oriStr.length();i++){
+			retval+=fillChar;
+		}
+		retval+= oriStr;
 		return retval;
 	}
 	
-	public String rightNearBy(String timeHash){
+	public String rightFill(String str,int length,char fillChar){
+		String oriStr = str;
 		String retval = "";
+		if(str == null || str == ""){
+			oriStr = "";
+		}
+		retval = oriStr;
+		for(int i=oriStr.length();i<length;i++){
+			retval+=fillChar;
+		}
 		return retval;
+	}
+	
+	public String intArrayToString(byte[] objs){
+		StringBuilder builder = new StringBuilder();
+		for(Object obj:objs){
+			builder.append(obj);
+		}
+		//System.out.println(builder.toString());
+		return builder.toString();
+	}
+	
+	public byte[] stringToIntArray(String hashCodeStr){
+		byte[] retval = null;
+		if(hashCodeStr == null || hashCodeStr == ""){
+			return retval;
+		}
+		retval = new byte[hashCodeStr.length()];
+		int idx = 0;
+		for(char c:hashCodeStr.toCharArray()){
+			retval[idx] = Byte.parseByte(Character.toString(c));
+			idx++;
+		}
+		return retval;
+	}
+	
+	
+	/**
+	 * 时间点右边 delta T的时间 根据timeHash的位数做判断
+	 * 
+	 * @param timeHash
+	 * @param plusOrMinus  plus:true  minus:false
+	 * @return
+	 * 
+	 */
+	String deltaTNearBy(String timeHash,boolean plusOrMinus){
+		String retval = "";
+		if(timeHash == null || timeHash == ""){
+			return retval;
+		}
+		int oriPrecision = timeHash.length();
+		int fillPrecision = MAX_PRECISION_16 - oriPrecision+1;
+		
+		String completeTimeHash = rightFill(timeHash,MAX_PRECISION_16, '0');
+		String deltaTTimeHash = leftFill(rightFill("1",fillPrecision, '0'), MAX_PRECISION_16, '0');
+		
+		// to decimal
+		int minusDec = Integer.parseInt(completeTimeHash,4) - Integer.parseInt(deltaTTimeHash,4);
+		if(plusOrMinus){
+			minusDec = Integer.parseInt(completeTimeHash,4) + Integer.parseInt(deltaTTimeHash,4);
+		}
+		
+		// decimal to binary
+		long ret = bitToTime(stringToIntArray(leftFill(Integer.toBinaryString(minusDec), BIT_NUMBER_32, '0')));
+		System.out.println("deltaT:"+ret);
+		return normalize(ret,oriPrecision);
+	}
+	
+	/**
+	 * 时间点右边 delta T的时间 根据timeHash的位数做判断
+	 * @return left nearby time hash code
+	 */
+	public String leftNearBy(String timeHash){
+		return deltaTNearBy(timeHash,false);
+	}
+	
+	/**
+	 * 时间点右边 delta T的时间 根据timeHash的位数做判断
+	 * @param timeHash
+	 * @return
+	 */
+	public String rightNearBy(String timeHash){
+		return deltaTNearBy(timeHash,true);
 	}
 	
 }

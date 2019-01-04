@@ -47,16 +47,16 @@ public class TimeNormalizationTest {
 	
 	@Test
 	public void testDecodeBase4(){
-		assertEquals("11100001", intArrayToString(timeNor.decodeBase4("3201")));
-		assertEquals("11", intArrayToString(timeNor.decodeBase4("3")));
-		assertEquals("00", intArrayToString(timeNor.decodeBase4("0")));
-		assertEquals("011011100110", intArrayToString(timeNor.decodeBase4("123212")));
-		assertEquals("101010010101111111", intArrayToString(timeNor.decodeBase4("222111333")));
+		assertEquals("11100001", timeNor.intArrayToString(timeNor.decodeBase4("3201")));
+		assertEquals("11", timeNor.intArrayToString(timeNor.decodeBase4("3")));
+		assertEquals("00", timeNor.intArrayToString(timeNor.decodeBase4("0")));
+		assertEquals("011011100110", timeNor.intArrayToString(timeNor.decodeBase4("123212")));
+		assertEquals("101010010101111111", timeNor.intArrayToString(timeNor.decodeBase4("222111333")));
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testDecodeBase4_error1(){
-		assertEquals("11100001", intArrayToString(timeNor.decodeBase4("324301")));
+		assertEquals("11100001", timeNor.intArrayToString(timeNor.decodeBase4("324301")));
 	}
 	
 	@Test
@@ -115,6 +115,11 @@ public class TimeNormalizationTest {
 			long input = Math.round(Math.random()*10000000)+1500000000;
 			assertEquals(input, timeNor.deNormalize(timeNor.normalize(input)),1);;
 		}
+	}
+	
+	@Test
+	public void testDeNormalize_precision01(){
+		//TODO(kong)
 	}
 	
 	@Test
@@ -191,6 +196,9 @@ public class TimeNormalizationTest {
 	
 	@Test
 	public void testBitToTime() {
+		byte[] bs = {0,1,1,1,1,0,0,1,1,0,1,0,1,1,1,0,1,1,1,1,0,0,1,0,1,0,0,0,0,1,1,1};
+		System.out.println(timeNor.bitToTime(bs));
+		
 		Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:45");
 		byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
 		Long retval = timeNor.bitToTime(ret);
@@ -218,221 +226,220 @@ public class TimeNormalizationTest {
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:45");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100101111", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:46");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100110000", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:47");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100110010", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:48");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100110011", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:49");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100110101", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:50");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100110110", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:51");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100110111", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:52");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100111001", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:53");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100111010", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:54");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100111011", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:55");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100111101", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:56");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100111110", str);
 		}
 		
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:57");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111100111111", str);
 		}
 		
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:58");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101000001", str);
 		}
 		
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:59");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101000010", str);
 		}
 		
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:00");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101000100", str);
 		}
 		
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:01");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101000101", str);
 		}
 		
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:02");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101000110", str);
 		}
 		
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:03");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101001000", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:04");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101001001", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:05");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101001010", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:06");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101001100", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:07");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101001101", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:08");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101001110", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:09");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101010000", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:10");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101010001", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:11");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101010011", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:12");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101010100", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:13");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101010101", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:14");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101010111", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:00:15");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000101111101011000", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 12:30:00");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000110100011010101", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 13:00:00");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000111001001100111", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 13:16:00");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000111011110000010", str);
 		}
 		{
 			Timestamp ts = Timestamp.valueOf("2019-01-03 13:22:00");
 			byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
-			String str = intArrayToString(ret);
+			String str = timeNor.intArrayToString(ret);
 			assertEquals("01111101011101000111100101101100", str);
 		}
-		
 	}
 	
 	/**
@@ -467,15 +474,76 @@ public class TimeNormalizationTest {
 	}
 	
 	
-	
-	public String intArrayToString(byte[] objs){
-		StringBuilder builder = new StringBuilder();
-		for(Object obj:objs){
-			builder.append(obj);
-		}
-		//System.out.println(builder.toString());
-		return builder.toString();
+	@Test
+	public void testRightFill(){
+		assertEquals("ada     ",timeNor.rightFill("ada",8,' '));
+		assertEquals("        ",timeNor.rightFill("",8,' '));
+		assertEquals("        ",timeNor.rightFill(null,8,' '));
+		assertEquals("ada11111111",timeNor.rightFill("ada11111111",8,' '));
+		assertEquals("ada11111111",timeNor.rightFill("ada11111111",0,' '));
 	}
+	
+
+	@Test
+	public void testLeftFill(){
+		assertEquals("     ada",timeNor.leftFill("ada",8,' '));
+		assertEquals("        ",timeNor.leftFill("",8,' '));
+		assertEquals("        ",timeNor.leftFill(null,8,' '));
+		assertEquals("ada11111111",timeNor.leftFill("ada11111111",8,' '));
+		assertEquals("ada11111111",timeNor.leftFill("ada11111111",0,' '));
+	}
+	
+	@Test
+	public void testIntArrayToString(){
+		byte[] arr = {1,1,0,1,0,1};
+		assertEquals("110101", timeNor.intArrayToString(arr));
+	}
+	
+	
+	@Test
+	public void testStringToIntArray(){
+		assertEquals("110101", timeNor.intArrayToString(timeNor.stringToIntArray("110101")));
+		assertEquals("001010010101011000010101", timeNor.intArrayToString(timeNor.stringToIntArray("001010010101011000010101")));
+		assertEquals("001010011111100010101", timeNor.intArrayToString(timeNor.stringToIntArray("001010011111100010101")));
+		assertEquals("00010100101010101111001", timeNor.intArrayToString(timeNor.stringToIntArray("00010100101010101111001")));
+	}
+	
+	
+	@Test
+	//TODO(might be error!)
+	public void testNearBy(){
+		{
+			String oriTimeHash = timeNor.normalize(1500000253l);
+			String leftNearByTimeHash = timeNor.leftNearBy(oriTimeHash);
+			System.out.println("orgin time hash:"+oriTimeHash);
+			System.out.println("left nearby time hash:"+leftNearByTimeHash);
+			assertEquals("1321223233022012", leftNearByTimeHash);
+		}
+		
+		{
+			String oriTimeHash = timeNor.normalize(1500000253l);
+			String rightNearByTimeHash = timeNor.rightNearBy(oriTimeHash);
+			System.out.println("orgin time hash:"+oriTimeHash);
+			System.out.println("right nearby time hash:"+rightNearByTimeHash);
+			assertEquals("1321223233022013", rightNearByTimeHash);
+		}
+	}
+	
+	@Test
+	//TODO(might be error!)
+	public void testNearBy_WithPrecision(){
+		{
+			String oriTimeHash = timeNor.normalize(1546487985l,8);
+			String leftNearByTimeHash = timeNor.leftNearBy(oriTimeHash);
+			String rightNearByTimeHash = timeNor.rightNearBy(oriTimeHash);
+			System.out.println("orgin time hash:"+oriTimeHash);
+			System.out.println("left nearby time hash:"+leftNearByTimeHash);
+			System.out.println("right nearby time hash:"+rightNearByTimeHash);
+			assertEquals("13311302", leftNearByTimeHash);
+			assertEquals("13311310", rightNearByTimeHash);
+		}
+	}
+	
 	
 	@Test
 	public void testOthers() throws UnsupportedEncodingException{
@@ -493,6 +561,14 @@ public class TimeNormalizationTest {
 		System.out.println(Integer.toBinaryString(3));
 		System.out.println(Byte.parseByte("0"));
 		System.out.println(Byte.parseByte("1"));
+		
+		
+		// quarternary add | to decimal | add | to binary | to base4
+		System.out.println(Integer.parseInt("1321223200000000",4));
+		System.out.println(Integer.parseInt("0000000100000000",4));
+		long ret = timeNor.bitToTime(timeNor.stringToIntArray(timeNor.leftFill(Integer.toBinaryString(2041380864), 32, '0')));
+		System.out.println(ret);  //1499906481
+		System.out.println(timeNor.deNormalize("1321223200000000"));
 	}
 
 }
