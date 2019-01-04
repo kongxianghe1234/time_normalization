@@ -98,6 +98,78 @@ public class TimeNormalizationTest {
 	}
 	
 	@Test
+	public void testTimeRange_8(){
+		Timestamp ts1 = new Timestamp(timeNor.deNormalize("1321223231111111").longValue()*1000);
+		Timestamp ts2 = new Timestamp(timeNor.deNormalize("1321223331111111").longValue()*1000);
+		System.out.println(ts1.toLocalDateTime().toString());
+		System.out.println(ts2.toLocalDateTime().toString());
+		// 前8位一样基本时间差 13.3 hours
+	}
+	
+	@Test
+	public void testTimeRange_9(){
+		Timestamp ts1 = new Timestamp(timeNor.deNormalize("1321223233000000").longValue()*1000);
+		Timestamp ts2 = new Timestamp(timeNor.deNormalize("1321223223000000").longValue()*1000);
+		System.out.println(ts1.toLocalDateTime().toString());
+		System.out.println(ts2.toLocalDateTime().toString());
+		// 前9位一样基本时间差 200 minutes
+	}
+	
+	@Test
+	public void testTimeRange_10(){
+		Timestamp ts1 = new Timestamp(timeNor.deNormalize("1321223233000000").longValue()*1000);
+		Timestamp ts2 = new Timestamp(timeNor.deNormalize("1321223232000000").longValue()*1000);
+		System.out.println(ts1.toLocalDateTime().toString());
+		System.out.println(ts2.toLocalDateTime().toString());
+		// 前10位一样基本时间差 50 minutes
+	}
+	
+	@Test
+	public void testTimeRange_11(){
+		Timestamp ts1 = new Timestamp(timeNor.deNormalize("1321223233000000").longValue()*1000);
+		Timestamp ts2 = new Timestamp(timeNor.deNormalize("1321223233033333").longValue()*1000);
+		System.out.println(ts1.toLocalDateTime().toString());
+		System.out.println(ts2.toLocalDateTime().toString());
+		// 前11位一样基本时间差 12 minutes
+	}
+	
+	@Test
+	public void testTimeRange_12(){
+		Timestamp ts1 = new Timestamp(timeNor.deNormalize("1321223233023333").longValue()*1000);
+		Timestamp ts2 = new Timestamp(timeNor.deNormalize("1321223233020000").longValue()*1000);
+		System.out.println(ts1.toLocalDateTime().toString());
+		System.out.println(ts2.toLocalDateTime().toString());
+		// 前12位一样基本时间差 3 minutes
+	}
+	
+	@Test
+	public void testTimeRange_13(){
+		Timestamp ts1 = new Timestamp(timeNor.deNormalize("1321223233023333").longValue()*1000);
+		Timestamp ts2 = new Timestamp(timeNor.deNormalize("1321223233023000").longValue()*1000);
+		System.out.println(ts1.toLocalDateTime().toString());
+		System.out.println(ts2.toLocalDateTime().toString());
+		// 前13位一样基本时间差 50 seconds
+	}
+	
+	@Test
+	public void testTimeRange_14(){
+		Timestamp ts1 = new Timestamp(timeNor.deNormalize("1321223233023333").longValue()*1000);
+		Timestamp ts2 = new Timestamp(timeNor.deNormalize("1321223233023300").longValue()*1000);
+		System.out.println(ts1.toLocalDateTime().toString());
+		System.out.println(ts2.toLocalDateTime().toString());
+		// 前14位一样基本时间差 12 seconds
+	}
+	
+	@Test
+	public void testTimeRange_15(){
+		Timestamp ts1 = new Timestamp(timeNor.deNormalize("1321223133023333").longValue()*1000);
+		Timestamp ts2 = new Timestamp(timeNor.deNormalize("1321223133023330").longValue()*1000);
+		System.out.println(ts1.toLocalDateTime().toString());
+		System.out.println(ts2.toLocalDateTime().toString());
+		// 前15位一样基本时间差 3 seconds
+	}
+	
+	@Test
 	public void testBitToTime() {
 		Timestamp ts = Timestamp.valueOf("2019-01-03 11:59:45");
 		byte[] ret = timeNor.timeToBit(ts.getTime()/1000);
