@@ -1,0 +1,13 @@
+# 时间索引编码
+
+## 解决问题：
+
+在数据仓库（hadoop->hive etc.）表和表做业务join，连接字段就比较复杂,如果需要对相似时间delta T时间范围内做时间方向上统一，不好做，基于Mapreduce是可以的，对reduce line by line去过时间片就可以搞定，但是对于hive等数据仓库，基于sql，需要join字段，但是 空间 时间等，难以做相似位置，或者相似时间的统一和归一化。
+
+算法参考：geohash 对空间做的索引编码
+
+此项目实现：对时间的空间索引和归一化 可以将相似时间  如时间间隔 3s/50s/3min/...等时间跨度范围做数值上的统一。由于时间是不收敛的，不像longitude或者latitude有限制，所以我们采用100年的这样的限制方案，二进制编码的范围采用1970~2070年timestamp的方式。
+
+
+
+algorithm is refereneced by https://en.wikipedia.org/wiki/Geohash
