@@ -276,23 +276,40 @@ public class TimeNormalization {
 			return retval;
 		}
 		
+		if (timeHash.length() > MAX_PRECISION_16) {
+			return retval;
+		}
+		
 		String completeTimeHash = timeHash;
 		String deltaTTimeHash = "1";  // base4 加减最后一位
 		
-		int minusDec = 0;
+		Long minusDec = 0l;
 		try {
 			// to decimal
-			minusDec = Integer.parseInt(completeTimeHash,4) - Integer.parseInt(deltaTTimeHash,4);
+			minusDec = Long.parseLong(completeTimeHash,4) - Long.parseLong(deltaTTimeHash,4);
 			if(plusOrMinus){
-				minusDec = Integer.parseInt(completeTimeHash,4) + Integer.parseInt(deltaTTimeHash,4);
+				minusDec = Long.parseLong(completeTimeHash,4) + Long.parseLong(deltaTTimeHash,4);
 			}
 			
 		} catch (Throwable e) {
 			return retval;
+		}finally {
+			if(minusDec < 0){ // -1 toBinary is incorrect!
+				return retval;
+			}
 		}
 		
 		// decimal to binary
-		return encodeBase4(stringToIntArray(Integer.toBinaryString(minusDec)));
+		String base4Str = encodeBase4(stringToIntArray(Long.toBinaryString(minusDec)));
+		
+		// if base4Str length > 16
+		if(base4Str.length() > MAX_PRECISION_16){
+			return retval;
+		}else{
+			// must left fill 0.
+			retval = leftFill(base4Str, timeHash.length(), '0');
+		}
+		return retval;
 		
 	}
 	

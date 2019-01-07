@@ -63,6 +63,7 @@ public class TimeNormalizationTest {
 	
 	@Test
 	public void testNormalize(){
+		assertEquals(null, timeNor.normalize(-TimeNormalization.MAX_TIMESTAMP));
 		assertEquals(null, timeNor.normalize(-12l));
 		assertEquals(null, timeNor.normalize(null));
 		assertEquals("0000000000000000", timeNor.normalize(0l));
@@ -518,7 +519,40 @@ public class TimeNormalizationTest {
 	
 	
 	@Test
-	public void testNearBy(){
+	public void testNearBy_left(){
+		assertEquals(null, timeNor.leftNearBy(" "));
+		assertEquals(null, timeNor.leftNearBy(""));
+		assertEquals(null, timeNor.leftNearBy(null));
+		assertEquals(null, timeNor.leftNearBy("eeee"));
+		assertEquals("001000", timeNor.leftNearBy("001001"));
+		assertEquals("00100100200", timeNor.leftNearBy("00100100201"));
+		assertEquals("0010013323", timeNor.leftNearBy("0010013330"));
+		assertEquals("3333333333333332", timeNor.leftNearBy("3333333333333333"));
+		assertEquals(null, timeNor.leftNearBy("0"));
+		assertEquals("0", timeNor.leftNearBy("1"));
+		assertEquals("03", timeNor.leftNearBy("10"));
+		assertEquals(null, timeNor.leftNearBy("10000000000000000"));//length 17
+	}
+	
+	@Test
+	public void testNearBy_right(){
+		assertEquals(null, timeNor.rightNearBy(" "));
+		assertEquals(null, timeNor.rightNearBy(""));
+		assertEquals(null, timeNor.rightNearBy(null));
+		assertEquals(null, timeNor.rightNearBy("eeee"));
+		assertEquals("001002", timeNor.rightNearBy("001001"));
+		assertEquals("00100100202", timeNor.rightNearBy("00100100201"));
+		assertEquals("0010013331", timeNor.rightNearBy("0010013330"));
+		assertEquals(null, timeNor.rightNearBy("3333333333333333"));
+		assertEquals("1", timeNor.rightNearBy("0"));
+		assertEquals("2", timeNor.rightNearBy("1"));
+		assertEquals("10", timeNor.rightNearBy("3"));
+		assertEquals("11", timeNor.rightNearBy("10"));
+		assertEquals(null, timeNor.rightNearBy("10000000000000000"));//length 17
+	}
+	
+	@Test
+	public void testNearByNormal(){
 		//
 		{
 			String oriTimeHash = timeNor.normalize(1500000253l);
