@@ -92,6 +92,7 @@ public class TimeNormalizationTest {
 		
 		
 		assertEquals("1321223300", timeNor.normalize(1500003831l,10));
+		assertEquals("33333333", timeNor.normalize(TimeNormalization.MAX_TIMESTAMP*20,8));
 		
 		// with prediction
 		assertEquals("1321223300", timeNor.normalize(1500003831l,10));

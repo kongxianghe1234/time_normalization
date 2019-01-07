@@ -72,11 +72,22 @@ public class TimeNormalization {
 	 * @return
 	 */
 	public String normalize(Long timestamp,int precision){
-		String retval = "";
+		String retval = null;
 		if (precision > MAX_PRECISION_16 || precision <= 0) {
 			throw new IllegalArgumentException("timehash string illegal,must in [0,16]");
 		}
-		retval = normalize(timestamp).substring(0, precision);
+		
+		String timeHash = normalize(timestamp);
+		if(timeHash == null){
+			return retval;
+		}
+		
+		if(precision == MAX_PRECISION_16){
+			retval = timeHash;
+		}else{
+			retval = timeHash.substring(0, precision);
+		}
+		
 		return retval;
 	}
 	
