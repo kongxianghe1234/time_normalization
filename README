@@ -38,4 +38,4 @@ assertEquals("1321223233010331", timeNor.normalize(1500000010l));
 
 方法提供带precision的时间点左右deltaT的timeHash范围数值 --详情还是参考单元测试
 样例：
-   13311303 deltaT <- 13311310 -> deltaT 13311310
+   13311303 deltaT <- 13311310 -> deltaT 13311311
