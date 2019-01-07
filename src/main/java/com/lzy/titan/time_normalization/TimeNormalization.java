@@ -54,9 +54,10 @@ public class TimeNormalization {
 	 * @return
 	 */
 	public String normalize(Long timestamp){
-		String retval = "";
-		if(timestamp < 0){
-			throw new IllegalArgumentException("timestamp value must be positive!");
+		String retval = null;
+		if(timestamp == null || timestamp < 0){
+			return retval;
+			//throw new IllegalArgumentException("timestamp value must be positive!");
 		}
 		byte[] bitArr = timeToBit(timestamp);
 		retval = encodeBase4(bitArr);
@@ -270,7 +271,7 @@ public class TimeNormalization {
 	 * 
 	 */
 	String deltaTNearBy(String timeHash,boolean plusOrMinus){
-		String retval = "";
+		String retval = null;
 		if(timeHash == null || timeHash == ""){
 			return retval;
 		}
@@ -278,10 +279,16 @@ public class TimeNormalization {
 		String completeTimeHash = timeHash;
 		String deltaTTimeHash = "1";  // base4 加减最后一位
 		
-		// to decimal
-		int minusDec = Integer.parseInt(completeTimeHash,4) - Integer.parseInt(deltaTTimeHash,4);
-		if(plusOrMinus){
-			minusDec = Integer.parseInt(completeTimeHash,4) + Integer.parseInt(deltaTTimeHash,4);
+		int minusDec = 0;
+		try {
+			// to decimal
+			minusDec = Integer.parseInt(completeTimeHash,4) - Integer.parseInt(deltaTTimeHash,4);
+			if(plusOrMinus){
+				minusDec = Integer.parseInt(completeTimeHash,4) + Integer.parseInt(deltaTTimeHash,4);
+			}
+			
+		} catch (Throwable e) {
+			return retval;
 		}
 		
 		// decimal to binary

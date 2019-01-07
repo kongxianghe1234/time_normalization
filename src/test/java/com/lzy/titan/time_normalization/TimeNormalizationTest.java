@@ -63,6 +63,9 @@ public class TimeNormalizationTest {
 	
 	@Test
 	public void testNormalize(){
+		assertEquals(null, timeNor.normalize(-12l));
+		assertEquals(null, timeNor.normalize(null));
+		assertEquals("0000000000000000", timeNor.normalize(0l));
 		// 0 min (1500002786-1499999777) = 3009 ~= 50min (10位一样1321223233)
 		assertEquals("1321223233000000", timeNor.normalize(1499999777l));
 		assertEquals("1321223233010233", timeNor.normalize(1500000000l));
@@ -84,6 +87,7 @@ public class TimeNormalizationTest {
 		assertEquals("1321223200003332", timeNor.normalize(1499954821l)); // test
 		assertEquals("0000000000000000", timeNor.normalize(TimeNormalization.MIN_TIMESTAMP));
 		assertEquals("3333333333333333", timeNor.normalize(TimeNormalization.MAX_TIMESTAMP));
+		assertEquals("3333333333333333", timeNor.normalize(TimeNormalization.MAX_TIMESTAMP*2));
 		
 		
 		assertEquals("1321223300", timeNor.normalize(1500003831l,10));
@@ -550,6 +554,18 @@ public class TimeNormalizationTest {
 	}
 	
 	@Test
+	public void testNearBy_error(){
+		assertEquals(null, timeNor.leftNearBy("1319382"));
+		assertEquals(null, timeNor.leftNearBy("1213asdaa"));
+		assertEquals(null, timeNor.rightNearBy("1213asdaa"));
+		assertEquals(null, timeNor.rightNearBy("1213asdaa"));
+		assertEquals(null, timeNor.leftNearBy(""));
+		assertEquals(null, timeNor.leftNearBy(null));
+		assertEquals(null, timeNor.rightNearBy(""));
+		assertEquals(null, timeNor.rightNearBy(null));
+	}
+	
+	@Test
 	public void testNearBy_WithPrecision(){
 		{
 			String oriTimeHash = timeNor.normalize(1546487985l,8);
@@ -574,6 +590,12 @@ public class TimeNormalizationTest {
 		}
 	}
 	
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testNearBy_WithPrecision_error(){
+		timeNor.normalize(1546487985l,-1);
+		timeNor.normalize(1546487985l,17);
+	}
 	
 	@Test
 	public void testOthers() throws UnsupportedEncodingException{
