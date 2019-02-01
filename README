@@ -36,6 +36,10 @@ assertEquals("1321223233010233", timeNor.normalize(1500000000l));
 assertEquals("1321223233010302", timeNor.normalize(1500000002l));
 assertEquals("1321223233010331", timeNor.normalize(1500000010l));
 
+-- 同样支持标准16位base4 timeHash转为位10位时间戳
+// delta T < 1s | double * 2^32 might be error
+assertEquals(1499999777l, timeNor.deNormalize("1321223233000000").longValue(), 1);
+
 方法提供带precision的时间点左右deltaT的timeHash范围数值 --详情还是参考单元测试
 样例：
    13311303 deltaT <- 13311310 -> deltaT 13311311
